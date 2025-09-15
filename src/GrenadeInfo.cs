@@ -17,8 +17,10 @@ namespace GrenadeInfo
             int blindedByTeam,
             float blindedByTotalAmount,
             int TotalGrenadesThrown,
-            int TotalGrenadeDamageTaken,
-            int TotalGrenadeDamageGiven,
+            int TotalGrenadeDamageTakenFromEnemies,
+            int TotalGrenadeDamageTakenFromTeam,
+            int TotalGrenadeDamageGivenToEnemies,
+            int TotalGrenadeDamageGivenToTeam,
             int totalGrenadeBounces)> _players = [];
         private (CCSPlayerController?, int) _lastFlashbang = (null, -1);
         private readonly List<string> _grenadeTypes = [
@@ -47,7 +49,7 @@ namespace GrenadeInfo
             // get all players currently on the server
             foreach (CCSPlayerController player in Utilities.GetPlayers())
             {
-                _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0);
+                _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0, 0, 0);
             }
         }
 
@@ -104,7 +106,7 @@ namespace GrenadeInfo
 
             if (!_players.ContainsKey(player))
             {
-                _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0);
+                _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0, 0, 0);
             }
             return HookResult.Continue;
         }
@@ -131,22 +133,65 @@ namespace GrenadeInfo
                 || victim == null
                 || !victim.IsValid
                 || !_grenadeTypes.Contains(@event.Weapon.ToLower())
-                || !_players.TryGetValue(attacker, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) stats))
+                || !_players.TryGetValue(attacker, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) attackerStats))
             {
                 return HookResult.Continue;
             }
 
-            stats.totalGrenadeDamageGiven += @event.DmgHealth;
-            _players[attacker] = stats;
+            // Determine if it's team damage or enemy damage
+            bool isTeamDamage = attacker.Team == victim.Team;
+
+            // Update attacker's damage given
+            if (isTeamDamage)
+            {
+                attackerStats.totalGrenadeDamageGivenToTeam += @event.DmgHealth;
+            }
+            else
+            {
+                attackerStats.totalGrenadeDamageGivenToEnemies += @event.DmgHealth;
+            }
+            _players[attacker] = attackerStats;
+
+            // Update victim's damage taken
+            if (_players.TryGetValue(victim, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) victimStats))
+            {
+                if (isTeamDamage)
+                {
+                    victimStats.totalGrenadeDamageTakenFromTeam += @event.DmgHealth;
+                }
+                else
+                {
+                    victimStats.totalGrenadeDamageTakenFromEnemies += @event.DmgHealth;
+                }
+                _players[victim] = victimStats;
+            }
 
             if (Config.ShowGrenadeDamageInstantly)
             {
-                attacker.PrintToChat(Localizer["grenade.damage.given"].Value
-                    .Replace("{damage}", @event.DmgHealth.ToString())
-                    .Replace("{player}", victim.PlayerName));
-                victim.PrintToChat(Localizer["grenade.damage.received"].Value
-                    .Replace("{damage}", @event.DmgHealth.ToString())
-                    .Replace("{player}", attacker.PlayerName));
+                if (victim == attacker)
+                {
+                    attacker.PrintToChat(Localizer["grenade.damage.self"].Value
+                        .Replace("{damage}", @event.DmgHealth.ToString()));
+                    return HookResult.Continue;
+                }
+                else if (attacker.Team == victim.Team)
+                {
+                    attacker.PrintToChat(Localizer["grenade.damage.given.team"].Value
+                        .Replace("{damage}", @event.DmgHealth.ToString())
+                        .Replace("{player}", victim.PlayerName));
+                    victim.PrintToChat(Localizer["grenade.damage.received.team"].Value
+                        .Replace("{damage}", @event.DmgHealth.ToString())
+                        .Replace("{player}", attacker.PlayerName));
+                }
+                else
+                {
+                    attacker.PrintToChat(Localizer["grenade.damage.given.enemies"].Value
+                        .Replace("{damage}", @event.DmgHealth.ToString())
+                        .Replace("{player}", victim.PlayerName));
+                    victim.PrintToChat(Localizer["grenade.damage.received.enemies"].Value
+                        .Replace("{damage}", @event.DmgHealth.ToString())
+                        .Replace("{player}", attacker.PlayerName));
+                }
             }
             return HookResult.Continue;
         }
@@ -156,7 +201,7 @@ namespace GrenadeInfo
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
-                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) stats))
+                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) stats))
             {
                 return HookResult.Continue;
             }
@@ -170,7 +215,7 @@ namespace GrenadeInfo
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
-                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) stats))
+                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) stats))
             {
                 return HookResult.Continue;
             }
@@ -193,8 +238,8 @@ namespace GrenadeInfo
                 || _lastFlashbang.Item1.IsValid == false
                 || player == null
                 || !player.IsValid
-                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) statsFlashed)
-                || !_players.TryGetValue(_lastFlashbang.Item1!, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) statsFlasher))
+                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) statsFlashed)
+                || !_players.TryGetValue(_lastFlashbang.Item1!, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) statsFlasher))
             {
                 return HookResult.Continue;
             }
@@ -259,7 +304,7 @@ namespace GrenadeInfo
 
         private void PrintGrenadeStats(CCSPlayerController player)
         {
-            if (!_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) stats))
+            if (!_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) stats))
             {
                 return;
             }
@@ -267,95 +312,126 @@ namespace GrenadeInfo
             // Check if player has any grenade activity at all
             if (stats.blindedEnemies == 0 && stats.blindedTeam == 0 && stats.blindedSelf == 0 &&
                 stats.blindedByEnemies == 0 && stats.blindedByTeam == 0 &&
-                stats.totalGrenadeDamageTaken == 0 && stats.totalGrenadeDamageGiven == 0
+                stats.totalGrenadeDamageTakenFromEnemies == 0 && stats.totalGrenadeDamageTakenFromTeam == 0 &&
+                stats.totalGrenadeDamageGivenToEnemies == 0 && stats.totalGrenadeDamageGivenToTeam == 0
                 && stats.totalGrenadeBounces == 0)
             {
                 return;
             }
 
-            // Create a priority-based list of statistics with their importance scores
-            var statItems = new List<(string message, int priority, bool isNegative)>();
+            // Define stat categories with proper priorities and types
+            var negativeStats = new List<(string message, int basePriority, int value)>();
+            var positiveStats = new List<(string message, int basePriority, int value)>();
 
-            // Critical negative stats (highest priority)
+            // === NEGATIVE STATS (Learning opportunities - RED) ===
+            // Critical mistakes (highest priority)
             if (stats.blindedSelf > 0)
             {
-                statItems.Add((Localizer["flashbang.stats.self"].Value
-                    .Replace("{count}", stats.blindedSelf.ToString()), 100, true));
+                negativeStats.Add((Localizer["flashbang.stats.self"].Value
+                    .Replace("{count}", stats.blindedSelf.ToString()), 100, stats.blindedSelf));
             }
 
             if (stats.blindedTeam > 0)
             {
-                statItems.Add((Localizer["flashbang.stats.team"].Value
-                    .Replace("{count}", stats.blindedTeam.ToString()), 95, true));
+                negativeStats.Add((Localizer["flashbang.stats.team"].Value
+                    .Replace("{count}", stats.blindedTeam.ToString()), 95, stats.blindedTeam));
             }
 
-            // High-value positive stats
-            if (stats.blindedEnemies > 0)
+            // Team damage given (very high priority - serious mistake)
+            if (stats.totalGrenadeDamageGivenToTeam > 0)
             {
-                int priority = 90 + Math.Min(stats.blindedEnemies * 2, 10); // Bonus for multiple enemy flashes
-                statItems.Add((Localizer["flashbang.stats.enemies"].Value
-                    .Replace("{count}", stats.blindedEnemies.ToString()), priority, false));
+                negativeStats.Add((Localizer["grenade.stats.damage.given.team"].Value
+                    .Replace("{damage}", stats.totalGrenadeDamageGivenToTeam.ToString()), 92, stats.totalGrenadeDamageGivenToTeam));
             }
 
-            if (stats.totalGrenadeDamageTaken > 0)
+            // Damage taken from enemies (high priority - learn to avoid grenades)
+            if (stats.totalGrenadeDamageTakenFromEnemies > 0)
             {
-                int priority = 85 + Math.Min(stats.totalGrenadeDamageTaken / 10, 15); // Bonus for high damage
-                statItems.Add((Localizer["grenade.stats.damage.received"].Value
-                    .Replace("{damage}", stats.totalGrenadeDamageTaken.ToString()), priority, false));
+                negativeStats.Add((Localizer["grenade.stats.damage.received.enemies"].Value
+                    .Replace("{damage}", stats.totalGrenadeDamageTakenFromEnemies.ToString()), 90, stats.totalGrenadeDamageTakenFromEnemies));
             }
 
-            if (stats.totalGrenadeDamageGiven > 0)
+            // Damage taken from team (high priority - team coordination issue)
+            if (stats.totalGrenadeDamageTakenFromTeam > 0)
             {
-                int priority = 80 + Math.Min(stats.totalGrenadeDamageGiven / 10, 15); // Bonus for high damage
-                statItems.Add((Localizer["grenade.stats.damage.given"].Value
-                    .Replace("{damage}", stats.totalGrenadeDamageGiven.ToString()), priority, false));
+                negativeStats.Add((Localizer["grenade.stats.damage.received.team"].Value
+                    .Replace("{damage}", stats.totalGrenadeDamageTakenFromTeam.ToString()), 88, stats.totalGrenadeDamageTakenFromTeam));
             }
 
-            // Medium priority stats
-            if (stats.blindedTotalAmount > 0f)
-            {
-                int priority = 70 + Math.Min((int)(stats.blindedTotalAmount * 2), 20);
-                statItems.Add((Localizer["flashbang.stats.total_blind_time_enemies"].Value
-                    .Replace("{time}", stats.blindedTotalAmount.ToString("0.0")), priority, false));
-            }
-
+            // Being flashed by others (medium priority)
             if (stats.blindedByTeam > 0)
             {
-                statItems.Add((Localizer["flashbang.stats.blinded_by_team"].Value
-                    .Replace("{count}", stats.blindedByTeam.ToString()), 60, true));
+                negativeStats.Add((Localizer["flashbang.stats.blinded_by_team"].Value
+                    .Replace("{count}", stats.blindedByTeam.ToString()), 80, stats.blindedByTeam));
             }
 
             if (stats.blindedByEnemies > 0)
             {
-                statItems.Add((Localizer["flashbang.stats.blinded_by_enemies"].Value
-                    .Replace("{count}", stats.blindedByEnemies.ToString()), 55, false));
+                negativeStats.Add((Localizer["flashbang.stats.blinded_by_enemies"].Value
+                    .Replace("{count}", stats.blindedByEnemies.ToString()), 70, stats.blindedByEnemies));
             }
 
-            // Lower priority stats
+            // Time spent blinded (lower priority)
             if (stats.blindedByTotalAmount > 0f)
             {
-                statItems.Add((Localizer["flashbang.stats.total_blind_time_self"].Value
-                    .Replace("{time}", stats.blindedByTotalAmount.ToString("0.0")), 50, true));
+                negativeStats.Add((Localizer["flashbang.stats.total_blind_time_self"].Value
+                    .Replace("{time}", stats.blindedByTotalAmount.ToString("0.1")), 60, (int)stats.blindedByTotalAmount));
             }
 
+            // === POSITIVE STATS (Achievements - GREEN) ===
+            // High impact positive actions
+            if (stats.blindedEnemies > 0)
+            {
+                positiveStats.Add((Localizer["flashbang.stats.enemies"].Value
+                    .Replace("{count}", stats.blindedEnemies.ToString()), 90, stats.blindedEnemies));
+            }
+
+            if (stats.totalGrenadeDamageGivenToEnemies > 0)
+            {
+                positiveStats.Add((Localizer["grenade.stats.damage.given.enemies"].Value
+                    .Replace("{damage}", stats.totalGrenadeDamageGivenToEnemies.ToString()), 85, stats.totalGrenadeDamageGivenToEnemies));
+            }
+
+            // Efficiency stats
+            if (stats.blindedTotalAmount > 0f)
+            {
+                positiveStats.Add((Localizer["flashbang.stats.total_blind_time_enemies"].Value
+                    .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")), 80, (int)stats.blindedTotalAmount));
+            }
+
+            // Activity stats (lower priority)
             if (stats.totalGrenadesThrown > 0)
             {
-                int priority = 40 + Math.Min(stats.totalGrenadesThrown, 10);
-                statItems.Add((Localizer["grenade.stats.thrown"].Value
-                    .Replace("{count}", stats.totalGrenadesThrown.ToString()), priority, false));
+                positiveStats.Add((Localizer["grenade.stats.thrown"].Value
+                    .Replace("{count}", stats.totalGrenadesThrown.ToString()), 40, stats.totalGrenadesThrown));
             }
 
             if (stats.totalGrenadeBounces > 0)
             {
-                int priority = 30 + Math.Min(stats.totalGrenadeBounces, 10);
-                statItems.Add((Localizer["grenade.stats.bounces"].Value
-                    .Replace("{count}", stats.totalGrenadeBounces.ToString()), priority, false));
+                positiveStats.Add((Localizer["grenade.stats.bounces"].Value
+                    .Replace("{count}", stats.totalGrenadeBounces.ToString()), 30, stats.totalGrenadeBounces));
             }
 
-            // Sort by priority (descending) and prefer negative stats at same priority level
-            var sortedStats = statItems
-                .OrderByDescending(x => x.priority)
-                .ThenByDescending(x => x.isNegative) // Show warnings first at same priority
+            // Calculate dynamic priorities with bonuses
+            var finalStats = new List<(string message, int priority, bool isNegative)>();
+
+            // Add negative stats with dynamic priority bonuses
+            foreach (var (message, basePriority, value) in negativeStats)
+            {
+                int dynamicPriority = basePriority + Math.Min(value * 2, 20); // Bonus for severity
+                finalStats.Add((message, dynamicPriority, true));
+            }
+
+            // Add positive stats with dynamic priority bonuses
+            foreach (var (message, basePriority, value) in positiveStats)
+            {
+                int dynamicPriority = basePriority + Math.Min(value, 15); // Smaller bonus for achievements
+                finalStats.Add((message, dynamicPriority, false));
+            }
+
+            // Sort: Negative stats first (within same priority), then by priority descending
+            var sortedStats = finalStats
+                .OrderByDescending(x => x.isNegative ? x.priority + 1000 : x.priority) // Negative stats get priority boost
                 .Take(Config.InfoMessageLimit)
                 .Select(x => x.message)
                 .ToList();
