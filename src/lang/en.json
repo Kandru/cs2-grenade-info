@@ -18,8 +18,8 @@
     "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x blinded by enemies",
     "grenade.damage.given": "{bluegrey}[GrenadeInfo] {default}You dealt {green}{damage}{default}hp damage to {green}{player}",
     "grenade.damage.received": "{bluegrey}[GrenadeInfo] {default}You have been damaged for {green}{damage}{default}hp by {green}{player}",
-    "grenade.stats.thrown": "{blue}{count}{default} grenade(s) thrown",
+    "grenade.stats.thrown": "{green}{count}{default} grenade(s) thrown",
     "grenade.stats.damage.given": "{green}{damage}{default}hp grenade damage given",
     "grenade.stats.damage.received": "{red}{damage}{default}hp grenade damage received",
-    "grenade.stats.bounces": "{blue}{count}{default} bounce(s)"
+    "grenade.stats.bounces": "{green}{count}{default} bounce(s)"
 }
