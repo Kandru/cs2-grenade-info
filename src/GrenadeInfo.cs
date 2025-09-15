@@ -132,7 +132,7 @@ namespace GrenadeInfo
                 || !attacker.IsValid
                 || victim == null
                 || !victim.IsValid
-                || !_grenadeTypes.Contains(@event.Weapon.ToLower())
+                || !_grenadeTypes.Contains(@event.Weapon.ToLower(System.Globalization.CultureInfo.CurrentCulture))
                 || !_players.TryGetValue(attacker, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) attackerStats))
             {
                 return HookResult.Continue;
@@ -235,8 +235,7 @@ namespace GrenadeInfo
             CCSPlayerController? player = @event.Userid;
             if (_lastFlashbang.Item2 == -1
                 || _lastFlashbang.Item1 == null
-                || _lastFlashbang.Item1.IsValid == false
-                || player == null
+                || !_lastFlashbang.Item1.IsValid || player == null
                 || !player.IsValid
                 || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) statsFlashed)
                 || !_players.TryGetValue(_lastFlashbang.Item1!, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadesThrown, int totalGrenadeDamageTakenFromEnemies, int totalGrenadeDamageTakenFromTeam, int totalGrenadeDamageGivenToEnemies, int totalGrenadeDamageGivenToTeam, int totalGrenadeBounces) statsFlasher))
@@ -320,8 +319,8 @@ namespace GrenadeInfo
             }
 
             // Define stat categories with proper priorities and types
-            var negativeStats = new List<(string message, int basePriority, int value)>();
-            var positiveStats = new List<(string message, int basePriority, int value)>();
+            List<(string message, int basePriority, int value)> negativeStats = [];
+            List<(string message, int basePriority, int value)> positiveStats = [];
 
             // === NEGATIVE STATS (Learning opportunities - RED) ===
             // Critical mistakes (highest priority)
@@ -413,28 +412,27 @@ namespace GrenadeInfo
             }
 
             // Calculate dynamic priorities with bonuses
-            var finalStats = new List<(string message, int priority, bool isNegative)>();
+            List<(string message, int priority, bool isNegative)> finalStats = [];
 
             // Add negative stats with dynamic priority bonuses
-            foreach (var (message, basePriority, value) in negativeStats)
+            foreach ((string? message, int basePriority, int value) in negativeStats)
             {
                 int dynamicPriority = basePriority + Math.Min(value * 2, 20); // Bonus for severity
                 finalStats.Add((message, dynamicPriority, true));
             }
 
             // Add positive stats with dynamic priority bonuses
-            foreach (var (message, basePriority, value) in positiveStats)
+            foreach ((string? message, int basePriority, int value) in positiveStats)
             {
                 int dynamicPriority = basePriority + Math.Min(value, 15); // Smaller bonus for achievements
                 finalStats.Add((message, dynamicPriority, false));
             }
 
             // Sort: Negative stats first (within same priority), then by priority descending
-            var sortedStats = finalStats
-                .OrderByDescending(x => x.isNegative ? x.priority + 1000 : x.priority) // Negative stats get priority boost
+            List<string> sortedStats = [.. finalStats
+                .OrderByDescending(static x => x.isNegative ? x.priority + 1000 : x.priority) // Negative stats get priority boost
                 .Take(Config.InfoMessageLimit)
-                .Select(x => x.message)
-                .ToList();
+                .Select(static x => x.message)];
 
             // Send combined message to player
             if (sortedStats.Count > 0)
