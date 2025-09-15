@@ -260,7 +260,7 @@ namespace GrenadeInfo
             {
                 int priority = 70 + Math.Min((int)(stats.blindedTotalAmount * 2), 20); // Bonus for longer blind time
                 statItems.Add((Localizer["flashbang.stats.total_blind_time_enemies"].Value
-                    .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")), priority, false));
+                    .Replace("{time}", stats.blindedTotalAmount.ToString("0.0")), priority, false));
             }
 
             if (stats.blindedByTeam > 0)
@@ -279,7 +279,7 @@ namespace GrenadeInfo
             if (stats.blindedByTotalAmount > 0f)
             {
                 statItems.Add((Localizer["flashbang.stats.total_blind_time_self"].Value
-                    .Replace("{time}", stats.blindedByTotalAmount.ToString("0.1")), 50, true));
+                    .Replace("{time}", stats.blindedByTotalAmount.ToString("0.0")), 50, true));
             }
 
             if (stats.totalGrenadeBounces > 0)
