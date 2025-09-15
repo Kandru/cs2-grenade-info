@@ -38,7 +38,7 @@ namespace GrenadeInfo
         public override void Load(bool hotReload)
         {
             // register all event handlers
-            RegisterEventHandler<EventRoundStart>(OnRoundStart);
+            RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
             RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
@@ -47,6 +47,7 @@ namespace GrenadeInfo
             RegisterEventHandler<EventGrenadeBounce>(OnGrenadeBounced);
             RegisterEventHandler<EventFlashbangDetonate>(OnFlashbangDetonated);
             RegisterEventHandler<EventPlayerBlind>(OnPlayerBlinded);
+            RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
             // add chat commands
             if (!string.IsNullOrWhiteSpace(Config.CommandPersonalStats))
             {
@@ -70,14 +71,17 @@ namespace GrenadeInfo
         public override void Unload(bool hotReload)
         {
             // unregister all event handlers
-            DeregisterEventHandler<EventRoundStart>(OnRoundStart);
+            DeregisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             DeregisterEventHandler<EventRoundEnd>(OnRoundEnd);
             DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
+            DeregisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             DeregisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             DeregisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
             DeregisterEventHandler<EventGrenadeBounce>(OnGrenadeBounced);
             DeregisterEventHandler<EventFlashbangDetonate>(OnFlashbangDetonated);
             DeregisterEventHandler<EventPlayerBlind>(OnPlayerBlinded);
+            RemoveListener<Listeners.OnMapEnd>(OnMapEnd);
+
             // remove chat commands
             if (!string.IsNullOrWhiteSpace(Config.CommandPersonalStats))
             {
@@ -97,9 +101,9 @@ namespace GrenadeInfo
             _players.Clear();
         }
 
-        private HookResult OnRoundStart(EventRoundStart @event, GameEventInfo info)
+        private HookResult OnWarmupEnd(EventWarmupEnd @event, GameEventInfo info)
         {
-            // reset state on round start
+            // reset state on warmup end
             Reset();
             return HookResult.Continue;
         }
@@ -120,6 +124,8 @@ namespace GrenadeInfo
                     PrintGrenadeStats(player);
                 }
             }
+            // reset state on round start
+            Reset();
             return HookResult.Continue;
         }
 
@@ -135,6 +141,7 @@ namespace GrenadeInfo
             if (!_players.ContainsKey(player))
             {
                 _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0, 0, 0, 0);
+                Console.WriteLine($"Player {player.PlayerName} spawned.");
             }
             return HookResult.Continue;
         }
@@ -335,6 +342,12 @@ namespace GrenadeInfo
             _players[player] = statsFlashed;
 
             return HookResult.Continue;
+        }
+
+        private void OnMapEnd()
+        {
+            // reset state on map end
+            Reset();
         }
 
         private void PrintGrenadeStats(CCSPlayerController player)
