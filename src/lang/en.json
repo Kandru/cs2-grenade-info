@@ -4,7 +4,7 @@
     "admin.unknown_command": "[GrenadeInfo] Unknown command: {command}",
     "admin.reload": "[GrenadeInfo] Configuration reloaded",
     "chat.prefix": "{bluegrey}[GrenadeInfo]{default} ",
-    "flashbang.selfflash": "{bluegrey}[GrenadeInfo] {default}Self-Flash for {green}{sec}{default}s",
+    "flashbang.selfflash": "{bluegrey}[GrenadeInfo] {default}Self-Flash for {red}{sec}{default}s",
     "flashbang.given": "{bluegrey}[GrenadeInfo] {default}You flashed {green}{player}{default} for {green}{sec}{default}s",
     "flashbang.received": "{bluegrey}[GrenadeInfo] {default}You have been flashed by {green}{player}{default} for {green}{sec}{default}s",
     "flashbang.teamflash.given": "{bluegrey}[GrenadeInfo] {default}Team-Flashed {red}{player}{default} for {red}{sec}{default}sec",

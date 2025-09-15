@@ -4,7 +4,7 @@
     "admin.unknown_command": "[GranatenInfo] Unbekannter Befehl: {command}",
     "admin.reload": "[GranatenInfo] Konfiguration neu geladen",
     "chat.prefix": "{bluegrey}[GranatenInfo]{default} ",
-    "flashbang.selfflash": "{bluegrey}[GranatenInfo] {default}Du hast dich für {green}{sec}{default}s geblendet",
+    "flashbang.selfflash": "{bluegrey}[GranatenInfo] {default}Du hast dich für {red}{sec}{default}s geblendet",
     "flashbang.given": "{bluegrey}[GranatenInfo] {default}Du hast {green}{player}{default} für {green}{sec}{default}s geblendet",
     "flashbang.received": "{bluegrey}[GranatenInfo] {default}Du wurdest von {green}{player}{default} für {green}{sec}{default}s geblendet",
     "flashbang.teamflash.given": "{bluegrey}[GranatenInfo] {default}Team-Flash {red}{player}{default} für {red}{sec}{default}s",
