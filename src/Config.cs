@@ -22,8 +22,10 @@ namespace GrenadeInfo
         [JsonPropertyName("command_personal_stats")] public string CommandPersonalStats { get; set; } = "gstats";
         // info message limit
         [JsonPropertyName("info_message_limit")] public int InfoMessageLimit { get; set; } = 6;
-        // show players personal stats after round
-        [JsonPropertyName("show_personal_stats")] public bool ShowPersonalStats { get; set; } = true;
+        // whether or not to show top player stats after round
+        [JsonPropertyName("show_top_player_stats_on_round_end")] public bool ShowTopPlayerStatsOnRoundEnd { get; set; } = true;
+        // whether or not to show players personal stats after round
+        [JsonPropertyName("show_personal_stats_on_round_end")] public bool ShowPersonalStatsOnRoundEnd { get; set; } = true;
         // whether or not to show flash events during round
         [JsonPropertyName("show_flashevents_instantly")] public bool ShowFlashEventsInstantly { get; set; } = true;
         // whether or not to show grenade damage during round

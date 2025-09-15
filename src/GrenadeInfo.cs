@@ -106,18 +106,19 @@ namespace GrenadeInfo
 
         private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
         {
-            if (!Config.ShowPersonalStats)
+
+            if (Config.ShowTopPlayerStatsOnRoundEnd)
             {
-                return HookResult.Continue;
+                // Show top players leaderboard first
+                PrintTopPlayersStats();
             }
-
-            // Show top players leaderboard first
-            PrintTopPlayersStats();
-
-            // Then print individual statistics for all players
-            foreach (CCSPlayerController player in Utilities.GetPlayers().Where(static p => !p.IsBot && !p.IsHLTV))
+            if (Config.ShowPersonalStatsOnRoundEnd)
             {
-                PrintGrenadeStats(player);
+                // Then print individual statistics for all players
+                foreach (CCSPlayerController player in Utilities.GetPlayers().Where(static p => !p.IsBot && !p.IsHLTV))
+                {
+                    PrintGrenadeStats(player);
+                }
             }
             return HookResult.Continue;
         }
