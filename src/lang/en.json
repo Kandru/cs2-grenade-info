@@ -1,0 +1,17 @@
+{
+    "core.debugprint": "[GrenadeInfo][DEBUG]: {message}",
+    "core.config": "[GrenadeInfo] Configuration loaded",
+    "admin.unknown_command": "[GrenadeInfo] Unknown command: {command}",
+    "admin.reload": "[GrenadeInfo] Configuration reloaded",
+    "chat.prefix": "{bluegrey}[GrenadeInfo]{default} ",
+    "flashbang.selfflash": "{bluegrey}[GrenadeInfo] {default}Self-Flash for {green}{sec} {default}seconds",
+    "flashbang.teamflash.given": "{bluegrey}[GrenadeInfo] {default}Team-Flash {player} for {green}{sec} {default}seconds",
+    "flashbang.teamflash.received": "{bluegrey}[GrenadeInfo] {default}You have been team-flashed by {player} for {green}{sec} {default}seconds",
+    "flashbang.stats.total_blind_time_self": "{default}you were blind for {red}{time}{default}s",
+    "flashbang.stats.total_blind_time_enemies": "{default} you blinded enemies for {green}{time}{default}s",
+    "flashbang.stats.self": "{red}{count}{default}x self-flashes",
+    "flashbang.stats.team": "{red}{count}{default}x team-flashes",
+    "flashbang.stats.enemies": "{green}{count}{default}x enemies flashed",
+    "flashbang.stats.blinded_by_team": "{red}{count}{default}x blinded by team",
+    "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x blinded by enemies"
+}

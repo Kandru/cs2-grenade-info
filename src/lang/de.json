@@ -1,0 +1,17 @@
+{
+    "core.debugprint": "[GranatenInfo][DEBUG]: {message}",
+    "core.config": "[GranatenInfo] Konfiguration geladen",
+    "admin.unknown_command": "[GranatenInfo] Unbekannter Befehl: {command}",
+    "admin.reload": "[GranatenInfo] Konfiguration neu geladen",
+    "chat.prefix": "{bluegrey}[GranatenInfo]{default} ",
+    "flashbang.selfflash": "{bluegrey}[GranatenInfo] {default}Du hast dich für {green}{sec} {default}Sekunden geblendet",
+    "flashbang.teamflash.given": "{bluegrey}[GranatenInfo] {default}{player} für {green}{sec} {default}Sekunden geblendet",
+    "flashbang.teamflash.received": "{bluegrey}[GranatenInfo] {default}Von {player} für {green}{sec} {default}Sekunden geblendet",
+    "flashbang.stats.total_blind_time_self": "{default}Du warst {red}{time}{default}s geblendet",
+    "flashbang.stats.total_blind_time_enemies": "{default}Du hast Gegner für {green}{time}{default}s geblendet",
+    "flashbang.stats.self": "{red}{count}{default}x Selbst-geflasht",
+    "flashbang.stats.team": "{red}{count}{default}x Team-geflasht",
+    "flashbang.stats.enemies": "{green}{count}{default}x Gegner geblendet",
+    "flashbang.stats.blinded_by_team": "{red}{count}{default}x vom Team geblendet",
+    "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x vom Gegner geblendet"
+}
