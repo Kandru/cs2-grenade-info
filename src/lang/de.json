@@ -26,5 +26,16 @@
     "grenade.stats.damage.given.team": "{red}{damage}{default}hp Teamschaden verursacht",
     "grenade.stats.damage.received.enemies": "{red}{damage}{default}hp Schaden von Gegnern",
     "grenade.stats.damage.received.team": "{red}{damage}{default}hp Teamschaden erhalten",
-    "grenade.stats.bounces": "{green}{count}{default} Abpraller"
+    "grenade.stats.bounces": "{green}{count}{default} Abpraller",
+    "leaderboard.header": "{gold}=== BESTE GRANATEN SPIELER ===",
+    "leaderboard.player": "{medal} {gold}{player}{default} - {lightblue}{category}{default}: {achievement}",
+    "leaderboard.flashbang.enemies": "{green}{count} Gegner geblendet{default}",
+    "leaderboard.damage.enemies": "{green}{damage}hp Schaden{default}",
+    "leaderboard.blind.time": "{green}{time}s Blendzeit{default}",
+    "leaderboard.tactical.nades": "{green}{bounces} Abpraller + {flashes} Blendungen{default}",
+    "leaderboard.versatile.player": "{green}{flashes} Blendungen + {damage}hp Schaden{default} ({nades} Granaten)",
+    "leaderboard.flash.specialist": "{green}{count} reine Blendungen{default} ({time}s)",
+    "leaderboard.damage.specialist": "{green}{damage}hp reiner Schaden{default}",
+    "leaderboard.team.flasher": "{red}{self} Selbst + {team} Team geflasht{default}",
+    "leaderboard.team.damage": "{red}{damage}hp Teamschaden{default}"
 }

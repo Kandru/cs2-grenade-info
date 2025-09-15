@@ -26,5 +26,16 @@
     "grenade.stats.damage.given.team": "{red}{damage}{default}hp team damage given",
     "grenade.stats.damage.received.enemies": "{red}{damage}{default}hp damage from enemies",
     "grenade.stats.damage.received.team": "{red}{damage}{default}hp team damage received",
-    "grenade.stats.bounces": "{green}{count}{default} bounce(s)"
+    "grenade.stats.bounces": "{green}{count}{default} bounce(s)",
+    "leaderboard.header": "{gold}=== TOP GRENADE PLAYERS ===",
+    "leaderboard.player": "{medal} {gold}{player}{default} - {lightblue}{category}{default}: {achievement}",
+    "leaderboard.flashbang.enemies": "{green}flashed {count} enemies{default}",
+    "leaderboard.damage.enemies": "{green}{damage}hp damage{default}",
+    "leaderboard.blind.time": "{green}{time}s blind time{default}",
+    "leaderboard.tactical.nades": "{green}{bounces} bounces + {flashes} flashes{default}",
+    "leaderboard.versatile.player": "{green}{flashes} flashes + {damage}hp damage{default} ({nades} nades)",
+    "leaderboard.flash.specialist": "{green}{count} pure flashes{default} ({time}s)",
+    "leaderboard.damage.specialist": "{green}{damage}hp pure damage{default}",
+    "leaderboard.team.flasher": "{red}{self} self + {team} team flashes{default}",
+    "leaderboard.team.damage": "{red}{damage}hp team damage{default}"
 }

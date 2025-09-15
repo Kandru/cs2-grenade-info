@@ -87,7 +87,11 @@ namespace GrenadeInfo
             {
                 return HookResult.Continue;
             }
-            // print statistics for all players
+
+            // Show top players leaderboard first
+            PrintTopPlayersStats();
+
+            // Then print individual statistics for all players
             foreach (CCSPlayerController player in Utilities.GetPlayers().Where(static p => !p.IsBot && !p.IsHLTV))
             {
                 PrintGrenadeStats(player);
@@ -439,6 +443,133 @@ namespace GrenadeInfo
             {
                 string combinedMessage = Localizer["chat.prefix"].Value + string.Join(", ", sortedStats);
                 player.PrintToChat(combinedMessage);
+            }
+        }
+
+        private void PrintTopPlayersStats()
+        {
+            List<(CCSPlayerController player, string achievement, int score, string category)> playerAchievements = [];
+
+            foreach ((CCSPlayerController? player, (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int TotalGrenadesThrown, int TotalGrenadeDamageTakenFromEnemies, int TotalGrenadeDamageTakenFromTeam, int TotalGrenadeDamageGivenToEnemies, int TotalGrenadeDamageGivenToTeam, int totalGrenadeBounces) stats) in _players)
+            {
+                if (!player.IsValid || player.IsBot || player.IsHLTV)
+                {
+                    continue;
+                }
+
+                // Calculate different achievement scores for each player
+                List<(string achievement, int score, string category)> achievements = [];
+
+                // Positive achievements (higher is better)
+                if (stats.blindedEnemies > 0)
+                {
+                    achievements.Add((Localizer["leaderboard.flashbang.enemies"].Value
+                        .Replace("{count}", stats.blindedEnemies.ToString()),
+                        (stats.blindedEnemies * 100) + (int)(stats.blindedTotalAmount * 10), "Flash Master"));
+                }
+
+                if (stats.TotalGrenadeDamageGivenToEnemies > 0)
+                {
+                    achievements.Add((Localizer["leaderboard.damage.enemies"].Value
+                        .Replace("{damage}", stats.TotalGrenadeDamageGivenToEnemies.ToString()),
+                        stats.TotalGrenadeDamageGivenToEnemies * 2, "Damage Dealer"));
+                }
+
+                if (stats.blindedTotalAmount > 5.0f)
+                {
+                    achievements.Add((Localizer["leaderboard.blind.time"].Value
+                        .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")),
+                        (int)(stats.blindedTotalAmount * 20), "Blind Master"));
+                }
+
+                if (stats.totalGrenadeBounces > 0 && stats.blindedEnemies > 0)
+                {
+                    achievements.Add((Localizer["leaderboard.tactical.nades"].Value
+                        .Replace("{bounces}", stats.totalGrenadeBounces.ToString())
+                        .Replace("{flashes}", stats.blindedEnemies.ToString()),
+                        (stats.totalGrenadeBounces * 30) + (stats.blindedEnemies * 20), "Tactical Genius"));
+                }
+
+                // Multi-skill achievements
+                if (stats.TotalGrenadesThrown >= 3 && stats.blindedEnemies > 0 && stats.TotalGrenadeDamageGivenToEnemies > 0)
+                {
+                    // Combined impact score: flashes + damage with minimum activity
+                    int combinedScore = (stats.blindedEnemies * 50) + stats.TotalGrenadeDamageGivenToEnemies;
+                    achievements.Add((Localizer["leaderboard.versatile.player"].Value
+                        .Replace("{flashes}", stats.blindedEnemies.ToString())
+                        .Replace("{damage}", stats.TotalGrenadeDamageGivenToEnemies.ToString())
+                        .Replace("{nades}", stats.TotalGrenadesThrown.ToString()),
+                        combinedScore, "Versatile Player"));
+                }
+
+                // Specialist achievements for high single-stat performance
+                if (stats.blindedEnemies >= 3 && stats.TotalGrenadeDamageGivenToEnemies < 30)
+                {
+                    // Pure flashbang specialist
+                    achievements.Add((Localizer["leaderboard.flash.specialist"].Value
+                        .Replace("{count}", stats.blindedEnemies.ToString())
+                        .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")),
+                        (stats.blindedEnemies * 80) + (int)(stats.blindedTotalAmount * 10), "Flash Specialist"));
+                }
+
+                if (stats.TotalGrenadeDamageGivenToEnemies >= 60 && stats.blindedEnemies == 0)
+                {
+                    // Pure damage specialist
+                    achievements.Add((Localizer["leaderboard.damage.specialist"].Value
+                        .Replace("{damage}", stats.TotalGrenadeDamageGivenToEnemies.ToString()),
+                        stats.TotalGrenadeDamageGivenToEnemies * 3, "Damage Specialist"));
+                }
+
+                // Anti-achievements (negative but notable)
+                if (stats.blindedSelf > 0 || stats.blindedTeam > 0)
+                {
+                    int mistakes = (stats.blindedSelf * 2) + stats.blindedTeam;
+                    if (mistakes >= 2)
+                    {
+                        achievements.Add((Localizer["leaderboard.team.flasher"].Value
+                            .Replace("{self}", stats.blindedSelf.ToString())
+                            .Replace("{team}", stats.blindedTeam.ToString()),
+                            mistakes * 50, "Team Flasher"));
+                    }
+                }
+
+                if (stats.TotalGrenadeDamageGivenToTeam > 30)
+                {
+                    achievements.Add((Localizer["leaderboard.team.damage"].Value
+                        .Replace("{damage}", stats.TotalGrenadeDamageGivenToTeam.ToString()),
+                        stats.TotalGrenadeDamageGivenToTeam, "Friendly Fire"));
+                }
+
+                // Get the best achievement for this player
+                if (achievements.Count > 0)
+                {
+                    (string? achievement, int score, string? category) = achievements.OrderByDescending(static x => x.score).First();
+                    playerAchievements.Add((player, achievement, score, category));
+                }
+            }
+
+            // Get top 3 players
+            List<(CCSPlayerController player, string achievement, int score, string category)> topPlayers = [.. playerAchievements
+                .OrderByDescending(static x => x.score)
+                .Take(3)];
+
+            if (topPlayers.Count > 0)
+            {
+                // Send header message
+                Server.PrintToChatAll(Localizer["leaderboard.header"].Value);
+
+                // Display top players
+                for (int i = 0; i < topPlayers.Count; i++)
+                {
+                    (CCSPlayerController? player, string? achievement, int score, string? category) = topPlayers[i];
+                    string message = Localizer["leaderboard.player"].Value
+                        .Replace("{medal}", $"#{i + 1}")
+                        .Replace("{player}", player.PlayerName)
+                        .Replace("{category}", category)
+                        .Replace("{achievement}", achievement);
+
+                    Server.PrintToChatAll(message);
+                }
             }
         }
     }

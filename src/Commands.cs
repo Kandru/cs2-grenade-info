@@ -29,6 +29,7 @@ namespace GrenadeInfo
         [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "")]
         public void CommandGrenadeStats(CCSPlayerController player, CommandInfo command)
         {
+            PrintTopPlayersStats();
             PrintGrenadeStats(player);
         }
     }
