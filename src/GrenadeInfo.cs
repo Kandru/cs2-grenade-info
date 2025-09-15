@@ -461,7 +461,7 @@ namespace GrenadeInfo
             if (stats.blindedByTotalAmount > 0f)
             {
                 negativeStats.Add((Localizer["flashbang.stats.total_blind_time_self"].Value
-                    .Replace("{time}", stats.blindedByTotalAmount.ToString("0.1")), 60, (int)stats.blindedByTotalAmount));
+                    .Replace("{time}", stats.blindedByTotalAmount.ToString("0.0")), 60, (int)stats.blindedByTotalAmount));
             }
 
             // === POSITIVE STATS (Achievements - GREEN) ===
@@ -482,7 +482,7 @@ namespace GrenadeInfo
             if (stats.blindedTotalAmount > 0f)
             {
                 positiveStats.Add((Localizer["flashbang.stats.total_blind_time_enemies"].Value
-                    .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")), 80, (int)stats.blindedTotalAmount));
+                    .Replace("{time}", stats.blindedTotalAmount.ToString("0.0")), 80, (int)stats.blindedTotalAmount));
             }
 
             // Activity stats (lower priority)
@@ -561,7 +561,7 @@ namespace GrenadeInfo
                 if (stats.blindedTotalAmount > 5.0f)
                 {
                     achievements.Add((Localizer["leaderboard.blind.time"].Value
-                        .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")),
+                        .Replace("{time}", stats.blindedTotalAmount.ToString("0.0")),
                         (int)(stats.blindedTotalAmount * 20), "Blind Master"));
                 }
 
@@ -591,7 +591,7 @@ namespace GrenadeInfo
                     // Pure flashbang specialist
                     achievements.Add((Localizer["leaderboard.flash.specialist"].Value
                         .Replace("{count}", stats.blindedEnemies.ToString())
-                        .Replace("{time}", stats.blindedTotalAmount.ToString("0.1")),
+                        .Replace("{time}", stats.blindedTotalAmount.ToString("0.0")),
                         (stats.blindedEnemies * 80) + (int)(stats.blindedTotalAmount * 10), "Flash Specialist"));
                 }
 
