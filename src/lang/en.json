@@ -26,6 +26,7 @@
     "grenade.stats.damage.given.team": "{red}{damage}{default}hp team damage given",
     "grenade.stats.damage.received.enemies": "{red}{damage}{default}hp damage from enemies",
     "grenade.stats.damage.received.team": "{red}{damage}{default}hp team damage received",
+    "grenade.stats.damage.received.self": "{red}{damage}{default}hp self-damage taken",
     "grenade.stats.bounces": "{green}{count}{default} bounce(s)",
     "leaderboard.header": "{gold}=== TOP GRENADE PLAYERS ===",
     "leaderboard.player": "{medal} {gold}{player}{default} - {lightblue}{category}{default}: {achievement}",

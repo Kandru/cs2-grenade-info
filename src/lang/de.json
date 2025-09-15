@@ -26,6 +26,7 @@
     "grenade.stats.damage.given.team": "{red}{damage}{default}hp Teamschaden verursacht",
     "grenade.stats.damage.received.enemies": "{red}{damage}{default}hp Schaden von Gegnern",
     "grenade.stats.damage.received.team": "{red}{damage}{default}hp Teamschaden erhalten",
+    "grenade.stats.damage.received.self": "{red}{damage}{default}hp Selbstschaden erhalten",
     "grenade.stats.bounces": "{green}{count}{default} Abpraller",
     "leaderboard.header": "{gold}=== BESTE GRANATEN SPIELER ===",
     "leaderboard.player": "{medal} {gold}{player}{default} - {lightblue}{category}{default}: {achievement}",
