@@ -27,6 +27,7 @@ namespace GrenadeInfo
             "smokegrenade",
             "molotov",
             "incgrenade",
+            "inferno",
             "decoy",
             "tagrenade"
         ];
@@ -123,16 +124,30 @@ namespace GrenadeInfo
 
         private HookResult OnPlayerHurt(EventPlayerHurt @event, GameEventInfo info)
         {
-            CCSPlayerController? player = @event.Attacker;
-            if (player == null
-                || !player.IsValid
-                || !_players.TryGetValue(player, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) stats))
+            CCSPlayerController? attacker = @event.Attacker;
+            CCSPlayerController? victim = @event.Userid;
+            if (attacker == null
+                || !attacker.IsValid
+                || victim == null
+                || !victim.IsValid
+                || !_grenadeTypes.Contains(@event.Weapon.ToLower())
+                || !_players.TryGetValue(attacker, out (int blindedEnemies, int blindedTeam, int blindedSelf, float blindedTotalAmount, int blindedByEnemies, int blindedByTeam, float blindedByTotalAmount, int totalGrenadeDamageTaken, int totalGrenadeDamageGiven, int totalGrenadeBounces, int totalGrenadesThrown) stats))
             {
                 return HookResult.Continue;
             }
 
             stats.totalGrenadeDamageGiven += @event.DmgHealth;
-            _players[player] = stats;
+            _players[attacker] = stats;
+
+            if (Config.ShowGrenadeDamageInstantly)
+            {
+                attacker.PrintToChat(Localizer["grenade.damage.given"].Value
+                    .Replace("{damage}", @event.DmgHealth.ToString())
+                    .Replace("{player}", victim.PlayerName));
+                victim.PrintToChat(Localizer["grenade.damage.received"].Value
+                    .Replace("{damage}", @event.DmgHealth.ToString())
+                    .Replace("{player}", attacker.PlayerName));
+            }
             return HookResult.Continue;
         }
 
@@ -239,7 +254,6 @@ namespace GrenadeInfo
             // save stats for flashed player
             _players[player] = statsFlashed;
 
-            Console.WriteLine($"[GrenadeInfo] {player.PlayerName} was blinded by {statsFlasher.blindedByTotalAmount}, {statsFlashed.blindedByTotalAmount}");
             return HookResult.Continue;
         }
 

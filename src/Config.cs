@@ -22,6 +22,8 @@ namespace GrenadeInfo
         [JsonPropertyName("show_personal_stats")] public bool ShowPersonalStats { get; set; } = true;
         // whether or not to show enemies flashed during round
         [JsonPropertyName("show_enemies_flashed")] public bool ShowEnemiesFlashed { get; set; } = true;
+        // whether or not to show grenade damage during round
+        [JsonPropertyName("show_grenade_damage_instantly")] public bool ShowGrenadeDamageInstantly { get; set; } = true;
     }
 
     public partial class GrenadeInfo : BasePlugin, IPluginConfig<PluginConfig>
