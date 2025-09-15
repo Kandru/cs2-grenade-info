@@ -237,7 +237,7 @@ namespace GrenadeInfo
                 // set stats for flasher
                 statsFlasher.blindedEnemies += 1;
                 statsFlasher.blindedTotalAmount += @event.BlindDuration;
-                if (Config.ShowEnemiesFlashed)
+                if (Config.ShowFlashEventsInstantly)
                 {
                     // show message to the flasher
                     _lastFlashbang.Item1.PrintToChat(Localizer["flashbang.given"].Value

@@ -20,8 +20,8 @@ namespace GrenadeInfo
         [JsonPropertyName("info_message_limit")] public int InfoMessageLimit { get; set; } = 6;
         // show players personal stats after round
         [JsonPropertyName("show_personal_stats")] public bool ShowPersonalStats { get; set; } = true;
-        // whether or not to show enemies flashed during round
-        [JsonPropertyName("show_enemies_flashed")] public bool ShowEnemiesFlashed { get; set; } = true;
+        // whether or not to show flash events during round
+        [JsonPropertyName("show_flashevents_instantly")] public bool ShowFlashEventsInstantly { get; set; } = true;
         // whether or not to show grenade damage during round
         [JsonPropertyName("show_grenade_damage_instantly")] public bool ShowGrenadeDamageInstantly { get; set; } = true;
     }
