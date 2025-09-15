@@ -225,11 +225,11 @@ namespace GrenadeInfo
                 if (Config.ShowEnemiesFlashed)
                 {
                     // show message to the flasher
-                    _lastFlashbang.Item1.PrintToChat(Localizer["flashbang.flash.given"].Value
+                    _lastFlashbang.Item1.PrintToChat(Localizer["flashbang.given"].Value
                         .Replace("{player}", player.PlayerName)
                         .Replace("{sec}", @event.BlindDuration.ToString("0.0")));
                     // show message to the flashed player
-                    player.PrintToChat(Localizer["flashbang.flash.received"].Value
+                    player.PrintToChat(Localizer["flashbang.received"].Value
                         .Replace("{player}", _lastFlashbang.Item1.PlayerName)
                         .Replace("{sec}", @event.BlindDuration.ToString("0.0")));
                 }
