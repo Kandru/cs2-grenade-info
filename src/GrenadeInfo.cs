@@ -110,7 +110,10 @@ namespace GrenadeInfo
 
         private HookResult OnRoundEnd(EventRoundEnd @event, GameEventInfo info)
         {
-
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             if (Config.ShowTopPlayerStatsOnRoundEnd)
             {
                 // Show top players leaderboard first
@@ -131,6 +134,10 @@ namespace GrenadeInfo
 
         private HookResult OnPlayerSpawn(EventPlayerSpawn @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid)
@@ -148,6 +155,10 @@ namespace GrenadeInfo
 
         private HookResult OnPlayerDisconnect(EventPlayerDisconnect @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid)
@@ -161,6 +172,10 @@ namespace GrenadeInfo
 
         private HookResult OnPlayerHurt(EventPlayerHurt @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             CCSPlayerController? attacker = @event.Attacker;
             CCSPlayerController? victim = @event.Userid;
             if (attacker == null
@@ -241,6 +256,10 @@ namespace GrenadeInfo
 
         private HookResult OnGrenadeThrown(EventGrenadeThrown @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
@@ -255,6 +274,10 @@ namespace GrenadeInfo
 
         private HookResult OnGrenadeBounced(EventGrenadeBounce @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             CCSPlayerController? player = @event.Userid;
             if (player == null
                 || !player.IsValid
@@ -269,12 +292,20 @@ namespace GrenadeInfo
 
         private HookResult OnFlashbangDetonated(EventFlashbangDetonate @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             _lastFlashbang = (@event.Userid, @event.Entityid);
             return HookResult.Continue;
         }
 
         private HookResult OnPlayerBlinded(EventPlayerBlind @event, GameEventInfo info)
         {
+            if (!Config.Enabled)
+            {
+                return HookResult.Continue;
+            }
             CCSPlayerController? player = @event.Userid;
             if (_lastFlashbang.Item2 == -1
                 || _lastFlashbang.Item1 == null
