@@ -47,6 +47,19 @@ namespace GrenadeInfo
             RegisterEventHandler<EventGrenadeBounce>(OnGrenadeBounced);
             RegisterEventHandler<EventFlashbangDetonate>(OnFlashbangDetonated);
             RegisterEventHandler<EventPlayerBlind>(OnPlayerBlinded);
+            // add chat commands
+            if (!string.IsNullOrWhiteSpace(Config.CommandPersonalStats))
+            {
+                AddCommand(Config.CommandPersonalStats,
+                "Show personal grenade statistics",
+                CommandGrenadePersonalStats);
+            }
+            if (!string.IsNullOrWhiteSpace(Config.CommandToplist))
+            {
+                AddCommand(Config.CommandToplist,
+                "Show top list about grenades",
+                CommandGrenadeTopStats);
+            }
             // get all players currently on the server
             foreach (CCSPlayerController player in Utilities.GetPlayers())
             {
@@ -65,6 +78,15 @@ namespace GrenadeInfo
             DeregisterEventHandler<EventGrenadeBounce>(OnGrenadeBounced);
             DeregisterEventHandler<EventFlashbangDetonate>(OnFlashbangDetonated);
             DeregisterEventHandler<EventPlayerBlind>(OnPlayerBlinded);
+            // remove chat commands
+            if (!string.IsNullOrWhiteSpace(Config.CommandPersonalStats))
+            {
+                RemoveCommand(Config.CommandPersonalStats, CommandGrenadePersonalStats);
+            }
+            if (!string.IsNullOrWhiteSpace(Config.CommandToplist))
+            {
+                RemoveCommand(Config.CommandToplist, CommandGrenadeTopStats);
+            }
             // reset state
             Reset();
         }

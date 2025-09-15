@@ -25,12 +25,21 @@ namespace GrenadeInfo
             }
         }
 
-        [ConsoleCommand("gstats", "Statistics about grenades")]
         [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "")]
-        public void CommandGrenadeStats(CCSPlayerController player, CommandInfo command)
+        public void CommandGrenadePersonalStats(CCSPlayerController? player, CommandInfo command)
+        {
+            if (player == null
+                || !player.IsValid)
+            {
+                return;
+            }
+            PrintGrenadeStats(player);
+        }
+
+        [CommandHelper(whoCanExecute: CommandUsage.CLIENT_ONLY, minArgs: 0, usage: "")]
+        public void CommandGrenadeTopStats(CCSPlayerController? player, CommandInfo command)
         {
             PrintTopPlayersStats();
-            PrintGrenadeStats(player);
         }
     }
 }
