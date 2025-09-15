@@ -18,6 +18,8 @@ namespace GrenadeInfo
         [JsonPropertyName("debug")] public bool Debug { get; set; } = false;
         // info message limit
         [JsonPropertyName("info_message_limit")] public int InfoMessageLimit { get; set; } = 6;
+        // whether or not to show enemies flashed during round
+        [JsonPropertyName("show_enemies_flashed")] public bool ShowEnemiesFlashed { get; set; } = true;
     }
 
     public partial class GrenadeInfo : BasePlugin, IPluginConfig<PluginConfig>

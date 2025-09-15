@@ -151,7 +151,7 @@ namespace GrenadeInfo
                     .Replace("{sec}", @event.BlindDuration.ToString("0.0")));
             }
             // check if flashed team
-            else if (player.Team == _lastFlashbang.Item1?.Team)
+            else if (player.Team == _lastFlashbang.Item1.Team)
             {
                 // set stats for flashed player
                 statsFlashed.blindedByTeam += 1;
@@ -177,6 +177,17 @@ namespace GrenadeInfo
                 // set stats for flasher
                 statsFlasher.blindedEnemies += 1;
                 statsFlasher.blindedTotalAmount += @event.BlindDuration;
+                if (Config.ShowEnemiesFlashed)
+                {
+                    // show message to the flasher
+                    _lastFlashbang.Item1.PrintToChat(Localizer["flashbang.flash.given"].Value
+                        .Replace("{player}", player.PlayerName)
+                        .Replace("{sec}", @event.BlindDuration.ToString("0.0")));
+                    // show message to the flashed player
+                    player.PrintToChat(Localizer["flashbang.flash.received"].Value
+                        .Replace("{player}", _lastFlashbang.Item1.PlayerName)
+                        .Replace("{sec}", @event.BlindDuration.ToString("0.0")));
+                }
             }
             // save stats for flasher
             _players[_lastFlashbang.Item1!] = statsFlasher;
