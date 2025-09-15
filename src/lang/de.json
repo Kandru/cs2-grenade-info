@@ -15,5 +15,7 @@
     "flashbang.stats.team": "{red}{count}{default}x Team-geflasht",
     "flashbang.stats.enemies": "{green}{count}{default}x Gegner geblendet",
     "flashbang.stats.blinded_by_team": "{red}{count}{default}x vom Team geblendet",
-    "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x vom Gegner geblendet"
+    "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x vom Gegner geblendet",
+    "grenade.stats.damage": "{green}{damage}{default}hp Granatenschaden",
+    "grenade.stats.bounces": "{blue}{count}{default}x Abpraller"
 }

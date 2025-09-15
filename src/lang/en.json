@@ -15,5 +15,7 @@
     "flashbang.stats.team": "{red}{count}{default}x team-flashes",
     "flashbang.stats.enemies": "{green}{count}{default}x enemies flashed",
     "flashbang.stats.blinded_by_team": "{red}{count}{default}x blinded by team",
-    "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x blinded by enemies"
+    "flashbang.stats.blinded_by_enemies": "{green}{count}{default}x blinded by enemies",
+    "grenade.stats.damage": "{green}{damage}{default}hp grenade damage",
+    "grenade.stats.bounces": "{blue}{count}{default}x bounces"
 }
