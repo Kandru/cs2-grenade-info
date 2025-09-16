@@ -6,6 +6,8 @@
 [![issues - cs2-map-modifier](https://img.shields.io/github/issues/Kandru/cs2-grenade-info)](https://github.com/Kandru/cs2-grenade-info/issues)
 [![](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=C2AVYKGVP9TRG)
 
+![GrenadeInfo Plugin Screenshot](screenshot.png)
+
 GrenadeInfo is a fun Counter-Strike 2 plugin that tracks your grenade statistics and provides feedback on your utility usage. Whether you're curious about how many enemies you've blinded with flashbangs or want to see who throws the most grenades each round, this plugin adds an entertaining layer of information to your gameplay.
 
 The plugin shows real-time notifications when you blind players, deal grenade damage, or accidentally flash teammates. At the end of each round, players can see their personal grenade statistics and check out a simple leaderboard highlighting the top performers. It's a lighthearted way to learn about your grenade habits and maybe discover some areas for improvement along the way.
