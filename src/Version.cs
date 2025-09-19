@@ -2,6 +2,6 @@ namespace GrenadeInfo
 {
     public partial class GrenadeInfo
     {
-        public override string ModuleVersion => "0.0.6";
+        public override string ModuleVersion => "0.0.7";
     }
 }
