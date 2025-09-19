@@ -342,8 +342,6 @@ namespace GrenadeInfo
                 // set stats for flashed player
                 statsFlashed.blindedSelf += 1;
                 statsFlashed.blindedByTotalAmount += @event.BlindDuration;
-                statsFlasher.blindedSelf += 1;
-                statsFlasher.blindedByTotalAmount += @event.BlindDuration;
                 // show message to the flasher
                 _lastFlashbang.Item1.PrintToChat(Localizer["flashbang.selfflash"].Value
                     .Replace("{sec}", @event.BlindDuration.ToString("0.0")));
@@ -356,7 +354,6 @@ namespace GrenadeInfo
                 statsFlashed.blindedByTotalAmount += @event.BlindDuration;
                 // set stats for flasher
                 statsFlasher.blindedTeam += 1;
-                statsFlasher.blindedTotalAmount += @event.BlindDuration;
                 // show message to the flasher
                 _lastFlashbang.Item1.PrintToChat(Localizer["flashbang.teamflash.given"].Value
                     .Replace("{player}", player.PlayerName)
