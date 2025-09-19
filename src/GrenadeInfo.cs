@@ -160,13 +160,15 @@ namespace GrenadeInfo
 
         private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
         {
+            CCSPlayerController? victim = @event.Userid;
+            if (victim == null
+                || !victim.IsValid)
+            {
+                return HookResult.Continue;
+            }
             if (Config.ShowPersonalStatsOnDeath)
             {
-                // Then print individual statistics for all players
-                foreach (CCSPlayerController player in Utilities.GetPlayers().Where(static p => !p.IsBot && !p.IsHLTV))
-                {
-                    PrintGrenadeStats(player);
-                }
+                PrintGrenadeStats(victim);
             }
             return HookResult.Continue;
         }
