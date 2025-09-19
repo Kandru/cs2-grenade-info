@@ -61,10 +61,13 @@ namespace GrenadeInfo
                 "Show top list about grenades",
                 CommandGrenadeTopStats);
             }
-            // get all players currently on the server
-            foreach (CCSPlayerController player in Utilities.GetPlayers())
+            if (hotReload)
             {
-                _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0, 0, 0, 0);
+                // get all players currently on the server
+                foreach (CCSPlayerController player in Utilities.GetPlayers())
+                {
+                    _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0, 0, 0, 0);
+                }
             }
         }
 
