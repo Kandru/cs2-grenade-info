@@ -41,6 +41,7 @@ namespace GrenadeInfo
             RegisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             RegisterEventHandler<EventRoundEnd>(OnRoundEnd);
             RegisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
+            RegisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             RegisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             RegisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
@@ -77,6 +78,7 @@ namespace GrenadeInfo
             DeregisterEventHandler<EventWarmupEnd>(OnWarmupEnd);
             DeregisterEventHandler<EventRoundEnd>(OnRoundEnd);
             DeregisterEventHandler<EventPlayerSpawn>(OnPlayerSpawn);
+            DeregisterEventHandler<EventPlayerDeath>(OnPlayerDeath);
             DeregisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
             DeregisterEventHandler<EventPlayerHurt>(OnPlayerHurt);
             DeregisterEventHandler<EventGrenadeThrown>(OnGrenadeThrown);
@@ -152,6 +154,19 @@ namespace GrenadeInfo
             {
                 _players[player] = (0, 0, 0, 0.0f, 0, 0, 0.0f, 0, 0, 0, 0, 0, 0, 0);
                 Console.WriteLine($"Player {player.PlayerName} spawned.");
+            }
+            return HookResult.Continue;
+        }
+
+        private HookResult OnPlayerDeath(EventPlayerDeath @event, GameEventInfo info)
+        {
+            if (Config.ShowPersonalStatsOnDeath)
+            {
+                // Then print individual statistics for all players
+                foreach (CCSPlayerController player in Utilities.GetPlayers().Where(static p => !p.IsBot && !p.IsHLTV))
+                {
+                    PrintGrenadeStats(player);
+                }
             }
             return HookResult.Continue;
         }
