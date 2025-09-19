@@ -227,7 +227,7 @@ namespace GrenadeInfo
                 _players[victim] = victimStats;
             }
 
-            if (Config.ShowGrenadeDamageInstantly && @event.Weapon.ToLower() != "inferno")
+            if (Config.ShowGrenadeDamageInstantly && !@event.Weapon.Equals("inferno", StringComparison.OrdinalIgnoreCase))
             {
                 if (victim == attacker)
                 {
