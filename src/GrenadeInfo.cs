@@ -163,7 +163,8 @@ namespace GrenadeInfo
         {
             CCSPlayerController? victim = @event.Userid;
             if (victim == null
-                || !victim.IsValid)
+                || !victim.IsValid
+                || victim.IsBot)
             {
                 return HookResult.Continue;
             }
@@ -542,8 +543,7 @@ namespace GrenadeInfo
             // Send combined message to player
             if (sortedStats.Count > 0)
             {
-                string combinedMessage = Localizer["chat.prefix"].Value + string.Join(", ", sortedStats);
-                player.PrintToChat(combinedMessage);
+                PrintConsoleOrChat(player, sortedStats);
             }
         }
 
@@ -656,10 +656,9 @@ namespace GrenadeInfo
 
             if (topPlayers.Count > 0)
             {
-                // Send header message
-                Server.PrintToChatAll(Localizer["leaderboard.header"].Value);
-
-                // Display top players
+                List<string> messages = [];
+                messages.Add(Localizer["leaderboard.header"].Value);
+                // get top players
                 for (int i = 0; i < topPlayers.Count; i++)
                 {
                     (CCSPlayerController? player, string? achievement, int score, string? category) = topPlayers[i];
@@ -668,9 +667,35 @@ namespace GrenadeInfo
                         .Replace("{player}", player.PlayerName)
                         .Replace("{category}", category)
                         .Replace("{achievement}", achievement);
-
-                    Server.PrintToChatAll(message);
+                    messages.Add(message);
                 }
+                // print to all players
+                foreach (CCSPlayerController entry in Utilities.GetPlayers().Where(p => !p.IsBot && !p.IsHLTV))
+                {
+                    PrintConsoleOrChat(entry, messages);
+                }
+            }
+        }
+
+        private void PrintConsoleOrChat(CCSPlayerController player, List<string> messages)
+        {
+            if (messages.Count == 0)
+            {
+                return;
+            }
+            if (Config.ShowStatsInChat)
+            {
+                player.PrintToChat(Localizer["chat.prefix"].Value + string.Join(", ", messages));
+            }
+            else
+            {
+                player.PrintToChat(Localizer["console.info"].Value);
+                player.PrintToConsole(Localizer["console.header"].Value);
+                foreach (string message in messages)
+                {
+                    player.PrintToConsole(System.Text.RegularExpressions.Regex.Replace(message, @"\{[^}]*\}", ""));
+                }
+                player.PrintToConsole(Localizer["console.footer"].Value);
             }
         }
     }

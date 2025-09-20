@@ -20,6 +20,8 @@ namespace GrenadeInfo
         [JsonPropertyName("command_toplist")] public string CommandToplist { get; set; } = "topg";
         // chat command to show personal stats (disabled if left empty)
         [JsonPropertyName("command_personal_stats")] public string CommandPersonalStats { get; set; } = "gstats";
+        // whether to show statistics in chat or in client console
+        [JsonPropertyName("show_stats_in_chat")] public bool ShowStatsInChat { get; set; } = true;
         // info message limit
         [JsonPropertyName("info_message_limit")] public int InfoMessageLimit { get; set; } = 6;
         // whether or not to show top player stats after round
