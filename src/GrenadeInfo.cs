@@ -127,7 +127,8 @@ namespace GrenadeInfo
             if (Config.ShowPersonalStatsOnRoundEnd)
             {
                 // Then print individual statistics for all players
-                foreach (CCSPlayerController player in Utilities.GetPlayers().Where(static p => !p.IsBot && !p.IsHLTV))
+                foreach (CCSPlayerController player in Utilities.GetPlayers().Where(p => !p.IsBot && !p.IsHLTV
+                     && (p.Pawn?.Value?.LifeState == (byte)LifeState_t.LIFE_ALIVE || !Config.ShowPersonalStatsOnDeath)))
                 {
                     PrintGrenadeStats(player);
                 }
